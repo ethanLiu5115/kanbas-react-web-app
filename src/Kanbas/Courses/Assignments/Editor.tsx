@@ -1,143 +1,125 @@
-import React from 'react';
-import { useParams, Link } from 'react-router-dom';
-import * as db from '../../Database';
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { addAssignment, updateAssignment } from "./reducer";
 
-export default function AssignmentEditor() {
+function Editor() {
     const { cid, aid } = useParams();
-    const assignment = db.assignments.find(a => a._id === aid);
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
 
-    if (!assignment) {
-        return <div>Assignment not found</div>;
-    }
+    const assignments = useSelector((state: any) => state.assignmentsReducer.assignments);
+    const assignment = aid ? assignments.find((a: any) => a._id === aid) : null;
 
-    const defaultDescription = "The assignment is available online. Submit a link to the landing page of your web application running on Netlify. The landing page should include the following: Your full name and section, links to each of the lab assignments, link to the Kanbas application, and links to all relevant source code repositories. The Kanbas application should include a link to navigate back to the landing page.";
-    const defaultPoints = 100;
-    const defaultDueDate = "2024-06-30T23:59";
-    const defaultAvailableFrom = "2024-06-01T00:00";
+    const [title, setTitle] = useState(assignment?.title || "");
+    const [description, setDescription] = useState(assignment?.description || "");
+    const [points, setPoints] = useState(assignment?.points || 100);
+    const [dueDate, setDueDate] = useState(assignment?.dueDate || "");
+    const [availableFromDate, setAvailableFromDate] = useState(assignment?.availableFromDate || "");
+    const [availableUntilDate, setAvailableUntilDate] = useState(assignment?.availableUntilDate || "");
+
+    useEffect(() => {
+        if (assignment) {
+            setTitle(assignment.title);
+            setDescription(assignment.description);
+            setPoints(assignment.points);
+            setDueDate(assignment.dueDate);
+            setAvailableFromDate(assignment.availableFromDate);
+            setAvailableUntilDate(assignment.availableUntilDate);
+        }
+    }, [assignment]);
+
+    const handleSave = () => {
+        const newAssignment = {
+            ...assignment,
+            title,
+            description,
+            points,
+            dueDate,
+            availableFromDate,
+            availableUntilDate,
+            course: cid,
+        };
+        if (assignment) {
+            dispatch(updateAssignment(newAssignment));
+        } else {
+            dispatch(addAssignment(newAssignment));
+        }
+        navigate(`/Kanbas/Courses/${cid}/Assignments`);
+    };
 
     return (
-        <div id="wd-assignments-editor" className="container mt-4">
+        <div className="container mt-4">
+            <h2>{assignment ? "Edit Assignment" : "Add Assignment"}</h2>
             <div className="mb-3">
-                <label htmlFor="wd-name" className="form-label">Assignment Name</label>
-                <input id="wd-name" className="form-control" value={assignment.title} readOnly />
+                <label htmlFor="title" className="form-label">Assignment Name</label>
+                <input
+                    id="title"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    className="form-control"
+                />
             </div>
             <div className="mb-3">
-                <label htmlFor="wd-description" className="form-label">Description</label>
-                <textarea id="wd-description" className="form-control" rows={5} defaultValue={defaultDescription} readOnly />
+                <label htmlFor="description" className="form-label">Description</label>
+                <textarea
+                    id="description"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    className="form-control"
+                />
             </div>
-            <div className="row mb-3">
-                <div className="col-md-2 text-end align-self-start">
-                    <label htmlFor="wd-points" className="form-label">Points</label>
-                </div>
-                <div className="col-md-10">
-                    <input id="wd-points" className="form-control" value={defaultPoints} readOnly />
-                </div>
+            <div className="mb-3">
+                <label htmlFor="points" className="form-label">Points</label>
+                <input
+                    id="points"
+                    type="number"
+                    value={points}
+                    onChange={(e) => setPoints(Number(e.target.value))}
+                    className="form-control"
+                />
             </div>
-            <div className="row mb-3">
-                <div className="col-md-2 text-end align-self-start">
-                    <label htmlFor="wd-group" className="form-label">Assignment Group</label>
-                </div>
-                <div className="col-md-10">
-                    <select id="wd-group" className="form-control">
-                        <option value="assignments">ASSIGNMENTS</option>
-                    </select>
-                </div>
+            <div className="mb-3">
+                <label htmlFor="dueDate" className="form-label">Due Date</label>
+                <input
+                    id="dueDate"
+                    type="date"
+                    value={dueDate}
+                    onChange={(e) => setDueDate(e.target.value)}
+                    className="form-control"
+                />
             </div>
-
-            <div className="row mb-3">
-                <div className="col-md-2 text-end align-self-start">
-                    <label htmlFor="wd-display-grade-as" className="form-label">Display Grade as</label>
-                </div>
-                <div className="col-md-10">
-                    <select id="wd-display-grade-as" className="form-control">
-                        <option value="percentage">Percentage</option>
-                    </select>
-                </div>
+            <div className="mb-3">
+                <label htmlFor="availableFromDate" className="form-label">Available from</label>
+                <input
+                    id="availableFromDate"
+                    type="date"
+                    value={availableFromDate}
+                    onChange={(e) => setAvailableFromDate(e.target.value)}
+                    className="form-control"
+                />
             </div>
-
-            <div className="row mb-3">
-                <div className="col-md-2 text-end align-self-start">
-                    <label htmlFor="wd-submission-type" className="form-label">Submission Type</label>
-                </div>
+            <div className="mb-3">
+                <label htmlFor="availableUntilDate" className="form-label">Available until</label>
+                <input
+                    id="availableUntilDate"
+                    type="date"
+                    value={availableUntilDate}
+                    onChange={(e) => setAvailableUntilDate(e.target.value)}
+                    className="form-control"
+                />
             </div>
-
-            <div className="row mb-3">
-                <div className="col-md-6">
-                    <div className="card mb-3">
-                        <div className="card-body">
-                            <div className="col-md-10">
-                                <select id="wd-submission-type" className="form-control">
-                                    <option value="online">Online</option>
-                                </select>
-                            </div>
-                            <label className="form-label fw-bold">Online Entry Options</label>
-                            <div className="form-check">
-                                <input className="form-check-input" type="checkbox" id="wd-text-entry" />
-                                <label className="form-check-label" htmlFor="wd-text-entry">Text Entry</label>
-                            </div>
-                            <div className="form-check">
-                                <input className="form-check-input" type="checkbox" id="wd-website-url" />
-                                <label className="form-check-label" htmlFor="wd-website-url">Website URL</label>
-                            </div>
-                            <div className="form-check">
-                                <input className="form-check-input" type="checkbox" id="wd-media-recordings" />
-                                <label className="form-check-label" htmlFor="wd-media-recordings">Media Recordings</label>
-                            </div>
-                            <div className="form-check">
-                                <input className="form-check-input" type="checkbox" id="wd-student-annotation" />
-                                <label className="form-check-label" htmlFor="wd-student-annotation">Student Annotation</label>
-                            </div>
-                            <div className="form-check">
-                                <input className="form-check-input" type="checkbox" id="wd-file-upload" />
-                                <label className="form-check-label" htmlFor="wd-file-upload">File Uploads</label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="col-md-6">
-                    <div className="card mb-3 d-flex justify-content-end align-items-start">
-                        <div className="card-body">
-                            <div className="row mb-3">
-                                <div className="col-md-4 text-end align-self-start">
-                                    <label htmlFor="wd-assign-to" className="form-label">Assign to</label>
-                                </div>
-                                <div className="col-md-8">
-                                    <input id="wd-assign-to" className="form-control" value="Everyone" readOnly />
-                                </div>
-                            </div>
-                            <div className="row mb-3">
-                                <div className="col-md-4 text-end align-self-start">
-                                    <label htmlFor="wd-due-date" className="form-label">Due</label>
-                                </div>
-                                <div className="col-md-8">
-                                    <input type="datetime-local" id="wd-due-date" className="form-control" value={defaultDueDate} readOnly />
-                                </div>
-                            </div>
-                            <div className="row mb-3">
-                                <div className="col-md-4 text-end align-self-start">
-                                    <label htmlFor="wd-available-from" className="form-label">Available from</label>
-                                </div>
-                                <div className="col-md-8">
-                                    <input type="datetime-local" id="wd-available-from" className="form-control" value={defaultAvailableFrom} readOnly />
-                                </div>
-                            </div>
-                            <div className="row mb-3">
-                                <div className="col-md-4 text-end align-self-start">
-                                    <label htmlFor="wd-available-until" className="form-label">Until</label>
-                                </div>
-                                <div className="col-md-8">
-                                    <input type="datetime-local" id="wd-available-until" className="form-control" value="2024-06-30T00:00" readOnly />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div className="d-flex justify-content-end">
-                <Link to={`/Kanbas/Courses/${cid}/Assignments`} id="wd-cancel" className="btn btn-secondary me-2">Cancel</Link>
-                <button id="wd-save" type="button" className="btn btn-success">Save</button>
-            </div>
+            <button onClick={handleSave} className="btn btn-success">
+                Save
+            </button>
+            <button
+                onClick={() => navigate(`/Kanbas/Courses/${cid}/Assignments`)}
+                className="btn btn-danger"
+            >
+                Cancel
+            </button>
         </div>
     );
 }
+
+export default Editor;
