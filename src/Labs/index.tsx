@@ -12,7 +12,7 @@ export default function Labs() {
     return (
         <Provider store={store}>
             <div>
-                <h1>Jose Annunziato</h1>
+                <h1>Yifei Liu</h1>
                 <h2>Labs</h2>
                 <TOC />
                 <hr />

@@ -62,7 +62,7 @@ export default function TOC() {
                 <a
                     id="wd-a3"
                     target="_blank"
-                    href="https://github.com/jannunzi"
+                    href="https://github.com/ethanLiu5115/"
                     className="nav-link"
                 >
                     GitHub
