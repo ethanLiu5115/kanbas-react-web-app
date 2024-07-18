@@ -6,7 +6,7 @@ export default function TOC() {
             <li className="nav-item">
                 <a id="wd-a" href="#/Labs" className="nav-link">
                     Labs
-                    <br />
+                    <br/>
                 </a>
             </li>
             <li className="nav-item">
@@ -54,6 +54,17 @@ export default function TOC() {
                 </a>
             </li>
             <li className="nav-item">
+                <a
+                    id="wd-a3"
+                    href="#/Labs/Lab5"
+                    className={`nav-link ${
+                        location.pathname.includes("Lab5") ? "active" : ""
+                    }`}
+                >
+                    Lab 5
+                </a>
+            </li>
+            <li className="nav-item">
                 <a id="wd-a3" href="#/Kanbas" className="nav-link">
                     Kanbas
                 </a>
@@ -66,6 +77,16 @@ export default function TOC() {
                     className="nav-link"
                 >
                     GitHub
+                </a>
+            </li>
+            <li className="nav-item">
+                <a
+                    id="wd-a3"
+                    target="_blank"
+                    href="https://kanbas-node-server-app-loxm.onrender.com"
+                    className="nav-link"
+                >
+                    Render
                 </a>
             </li>
         </ul>
