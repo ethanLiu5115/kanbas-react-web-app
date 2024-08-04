@@ -83,7 +83,7 @@ export default function TOC() {
                 <a
                     id="wd-a3"
                     target="_blank"
-                    href="https://kanbas-node-server-app-loxm.onrender.com"
+                    href="https://kanbas-node-server-app-1-7qtw.onrender.com"
                     className="nav-link"
                 >
                     Render
